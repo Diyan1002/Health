@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Menu, X } from "lucide-react";
-
+import { Link } from "react-router-dom";
 // Import assets
 import logo from "../assets/logo.png";
 
@@ -25,11 +25,11 @@ const Header = () => {
 
         {/* Desktop Menu */}
         <nav className="hidden md:flex space-x-8">
-          <a href="/" className="navLink">Home</a>
-          <a href="/about" className="navLink">About</a>
-          <a href="/scope" className="navLink">Scope</a>
-          <a href="/guidelines" className="navLink">Guidelines</a>
-          <a href="/editorial-board" className="navLink">Editorial Board</a>
+          <Link to="/" className="navLink">Home</Link>
+  <Link to="/about" className="navLink">About</Link>
+  <Link to="/scope" className="navLink">Scope</Link>
+  <Link to="/guidelines" className="navLink">Guidelines</Link>
+  <Link to="/editorial-board" className="navLink">Editorial Board</Link>
         </nav>
 
         {/* Submit Button (Desktop) */}
