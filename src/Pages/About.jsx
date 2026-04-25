@@ -1,6 +1,6 @@
 import React from "react";
 import { HeartPulse, Microscope, Users, Activity } from "lucide-react";
-
+import { Link } from "react-router-dom";
 const AboutJournal = () => {
   return (
     <section className="relative py-16 md:py-24 bg-gradient-to-br from-[#f8fafc] to-[#eef2ff] overflow-hidden">
@@ -132,10 +132,13 @@ const AboutJournal = () => {
               Interested in the specific topics we cover?
             </p>
 
-            <button className="border border-blue-600 text-blue-600 px-5 sm:px-6 py-2 rounded-md font-medium
-            hover:bg-blue-600 hover:text-white transition duration-300 text-sm sm:text-base">
-              Explore Our Full Scope
-            </button>
+          <Link
+  to="/scope"
+  className="border border-blue-600 text-blue-600 px-5 sm:px-6 py-2 rounded-md font-medium
+  hover:bg-blue-600 hover:text-white transition duration-300 text-sm sm:text-base inline-block"
+>
+  Explore Our Full Scope
+</Link>
           </div>
 
         </div>

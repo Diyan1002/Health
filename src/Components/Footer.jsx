@@ -28,23 +28,43 @@ const Footer = () => {
           </div>
 
           {/* Quick Links */}
-          <div>
-            <h3 className="text-white font-semibold mb-4">Quick Links</h3>
-            <ul className="space-y-2 text-sm">
-              <li><a href="/about" className="hover:text-blue-400">About Us</a></li>
-              <li><a href="/scope" className="hover:text-blue-400">Scope</a></li>
-              <li><a href="/editorial-board" className="hover:text-blue-400">Editorial Board</a></li>
-              <li><a href="/guidelines" className="hover:text-blue-400">Guidelines</a></li>
-            </ul>
-          </div>
+        <div>
+  <h3 className="text-white font-semibold mb-4">Quick Links</h3>
+  <ul className="space-y-2 text-sm">
 
+    <li>
+      <Link to="/about" className="hover:text-blue-400 transition">
+        About Us
+      </Link>
+    </li>
+
+    <li>
+      <Link to="/scope" className="hover:text-blue-400 transition">
+        Scope
+      </Link>
+    </li>
+
+    <li>
+      <Link to="/editorial-board" className="hover:text-blue-400 transition">
+        Editorial Board
+      </Link>
+    </li>
+
+    <li>
+      <Link to="/guidelines" className="hover:text-blue-400 transition">
+        Guidelines
+      </Link>
+    </li>
+
+  </ul>
+</div>
           {/* Article Types */}
           <div>
             <h3 className="text-white font-semibold mb-4">Article Types</h3>
             <ul className="space-y-2 text-sm">
-              <li><a href="/full-papers" className="hover:text-blue-400">Full Papers & Reviews</a></li>
-              <li><a href="/case-reports" className="hover:text-blue-400">Case Reports</a></li>
-              <li><a href="/methods" className="hover:text-blue-400">Methods & Short Comm.</a></li>
+              <li><a href="/" className="hover:text-blue-400">Full Papers & Reviews</a></li>
+              <li><a href="/" className="hover:text-blue-400">Case Reports</a></li>
+              <li><a href="/" className="hover:text-blue-400">Methods & Short Comm.</a></li>
             </ul>
           </div>
 

@@ -1,5 +1,6 @@
 import React from "react";
 import { CheckCircle2 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const items = [
   "Fast Peer Review Process",
@@ -60,10 +61,14 @@ export default function WhyPublish() {
 
         {/* Bottom CTA */}
         <div className="mt-12">
-          <button className="bg-blue-600 text-white px-8 py-3 rounded-full hover:bg-blue-700 transition transform hover:scale-105 shadow-lg">
-            Submit Your Research
-          </button>
-        </div>
+  <Link
+    to="/submit-paper"
+    className="inline-block bg-blue-600 text-white px-8 py-3 rounded-full 
+    hover:bg-blue-700 transition transform hover:scale-105 shadow-lg"
+  >
+    Submit Your Research
+  </Link>
+</div>
 
       </div>
     </section>
