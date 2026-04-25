@@ -25,7 +25,7 @@ import Indexing from "./Components/Indexing";
 import SubmissionFlow from "./Components/SubmissionFlow";
 import WhyPublish from "./Components/WhyPublish";
 import Newsletter from "./Components/Newsletter";
-import CallForPapers from "./Components/CallForPapers";
+// import CallForPapers from "./Components/CallForPapers";
 // import JournalMetrics from "./Components/JournalMetrics";
 import TopBar from "./Components/TopBar";
 
@@ -63,7 +63,7 @@ const Home = () => {
       {/* <StatsSection /> */}
 
       {/* CALL FOR PAPERS */}
-      <CallForPapers />
+      {/* <CallForPapers /> */}
 
       {/* RESEARCH SECTION */}
       {/* <ResearchSection /> */}
