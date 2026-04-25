@@ -1,0 +1,12 @@
+/* ./src/styles.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.navLink {
+  @apply text-gray-800 font-medium hover:text-blue-600 transition duration-300;
+}
+
+.mobileLink {
+  @apply text-gray-800 font-semibold hover:text-blue-600 transition;
+}
