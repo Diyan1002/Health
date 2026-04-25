@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { BookOpen, Globe, Calendar, Lock } from "lucide-react";
 
 /* ---------- DATA ---------- */
 
@@ -54,9 +55,7 @@ export default function JournalScope() {
         <div
           key={index}
           className={`bg-white p-4 sm:p-5 md:p-6 rounded-xl shadow-sm border-t-4 ${color}
-          hover:shadow-xl hover:-translate-y-1 md:hover:-translate-y-2 transition-all duration-500
-          opacity-0 animate-card`}
-          style={{ animationDelay: `${index * 0.05}s` }}
+          hover:shadow-xl hover:-translate-y-1 transition-all duration-300`}
         >
           <h4 className="font-semibold text-gray-900 text-sm sm:text-base mb-2">
             {item.title}
@@ -76,6 +75,35 @@ export default function JournalScope() {
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
 
+        {/* ================= ABOUT INFO STRIP (CLIENT REQUIREMENT ADDED) ================= */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-14">
+
+          <div className="bg-white p-4 rounded-xl shadow border">
+            <BookOpen className="text-blue-600 mb-2" />
+            <h4 className="font-semibold">Full Scope</h4>
+            <p className="text-xs text-gray-500">Medical + Veterinary + Biomedical Sciences</p>
+          </div>
+
+          <div className="bg-white p-4 rounded-xl shadow border">
+            <Globe className="text-blue-600 mb-2" />
+            <h4 className="font-semibold">Mission & Vision</h4>
+            <p className="text-xs text-gray-500">One Health integration globally</p>
+          </div>
+
+          <div className="bg-white p-4 rounded-xl shadow border">
+            <Calendar className="text-blue-600 mb-2" />
+            <h4 className="font-semibold">Publication</h4>
+            <p className="text-xs text-gray-500">Quarterly + Continuous Publishing</p>
+          </div>
+
+          <div className="bg-white p-4 rounded-xl shadow border">
+            <Lock className="text-blue-600 mb-2" />
+            <h4 className="font-semibold">Open Access</h4>
+            <p className="text-xs text-gray-500">Free global access (no paywall)</p>
+          </div>
+
+        </div>
+
         {/* Header */}
         <div className="text-center mb-12 md:mb-16">
           <div className="w-10 md:w-12 h-[3px] bg-blue-600 mx-auto mb-4"></div>
@@ -85,45 +113,45 @@ export default function JournalScope() {
           </h2>
 
           <p className="text-gray-500 max-w-2xl mx-auto text-sm sm:text-base">
-            J. Comp. Health Sci. welcomes submissions across a broad range of comparative and translational health sciences.
+            J. Comp. Health Sci. welcomes submissions across comparative and translational health sciences.
           </p>
         </div>
 
         {/* Sections */}
-        <h3 className="text-lg sm:text-xl font-semibold text-blue-600 mb-4 md:mb-6">
-          Clinical & Biomedical Health Sciences — Human and Veterinary
+        <h3 className="text-lg sm:text-xl font-semibold text-blue-600 mb-4">
+          Clinical & Biomedical Health Sciences
         </h3>
         {renderGrid(clinicalData, "border-blue-500")}
 
-        <h3 className="text-lg sm:text-xl font-semibold text-green-600 mb-4 md:mb-6">
-          Specialty Health Sciences — Human and Veterinary
+        <h3 className="text-lg sm:text-xl font-semibold text-green-600 mb-4">
+          Specialty Health Sciences
         </h3>
         {renderGrid(specialtyData, "border-green-500")}
 
-        <h3 className="text-lg sm:text-xl font-semibold text-cyan-600 mb-4 md:mb-6">
+        <h3 className="text-lg sm:text-xl font-semibold text-cyan-600 mb-4">
           Public Health & One Health Sciences
         </h3>
         {renderGrid(publicHealthData, "border-cyan-500")}
 
-        <h3 className="text-lg sm:text-xl font-semibold text-yellow-600 mb-4 md:mb-6">
+        <h3 className="text-lg sm:text-xl font-semibold text-yellow-600 mb-4">
           Cross-cutting Research
         </h3>
         {renderGrid(crossData, "border-yellow-500")}
 
-        {/* CTA Section */}
-        <div className="bg-blue-600 text-white py-6 md:py-8 px-4 sm:px-6 rounded-lg shadow-lg text-center">
+        {/* CTA */}
+        <div className="bg-blue-600 text-white py-8 px-4 rounded-lg shadow-lg text-center mt-10">
 
-          <h3 className="text-xl sm:text-2xl font-semibold mb-3 md:mb-4">
+          <h3 className="text-xl font-semibold mb-3">
             We Particularly Encourage:
           </h3>
 
-          <p className="text-sm sm:text-base md:text-lg mb-5">
-            Studies co-authored by human & veterinary teams | Research from LMICs | Policy analyses | Method papers
+          <p className="text-sm mb-5">
+            Human–Veterinary collaboration | LMIC research | Policy & translational studies
           </p>
 
           <Link
             to="/submit-paper"
-            className="inline-block bg-white text-blue-600 py-2.5 sm:py-3 px-6 sm:px-8 rounded-full text-sm sm:text-lg font-semibold hover:bg-gray-200 transition duration-300"
+            className="inline-block bg-white text-blue-600 py-2.5 px-6 rounded-full font-semibold hover:bg-gray-200 transition"
           >
             Submit Your Work
           </Link>
@@ -131,26 +159,6 @@ export default function JournalScope() {
         </div>
 
       </div>
-
-      {/* Animations */}
-      <style>
-        {`
-          @keyframes cardFade {
-            from {
-              opacity: 0;
-              transform: translateY(30px) scale(0.96);
-            }
-            to {
-              opacity: 1;
-              transform: translateY(0) scale(1);
-            }
-          }
-
-          .animate-card {
-            animation: cardFade 0.6s ease forwards;
-          }
-        `}
-      </style>
 
     </section>
   );

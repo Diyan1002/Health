@@ -1,14 +1,13 @@
 import React, { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
-
 import logo from "../assets/logo.png";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
 
-  const toggleMenu = () => setIsOpen(!isOpen);
+  const toggleMenu = () => setIsOpen((prev) => !prev);
   const closeMenu = () => setIsOpen(false);
 
   const navLinks = [
@@ -20,7 +19,8 @@ const Header = () => {
   ];
 
   return (
-    <header className="bg-white shadow-lg py-4 sticky top-0 z-50">
+    <header className="bg-white shadow-lg py-4 sticky top-0 z-50 relative">
+
       <div className="max-w-screen-xl mx-auto flex justify-between items-center px-6 md:px-8">
 
         {/* Logo */}
@@ -37,12 +37,11 @@ const Header = () => {
             <Link
               key={link.path}
               to={link.path}
-              className={`text-sm font-medium transition 
-                ${
-                  location.pathname === link.path
-                    ? "text-blue-600"
-                    : "text-gray-700 hover:text-blue-600"
-                }`}
+              className={`text-sm font-medium transition ${
+                location.pathname === link.path
+                  ? "text-blue-600"
+                  : "text-gray-700 hover:text-blue-600"
+              }`}
             >
               {link.name}
             </Link>
@@ -60,31 +59,33 @@ const Header = () => {
         {/* Mobile Menu Button */}
         <button
           onClick={toggleMenu}
-          className="md:hidden text-gray-800 z-50"
+          className="md:hidden text-gray-800 z-[60]"
         >
           {isOpen ? <X size={28} /> : <Menu size={28} />}
         </button>
       </div>
 
-      {/* Overlay */}
+      {/* ================= OVERLAY ================= */}
       {isOpen && (
         <div
           onClick={closeMenu}
-          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[40]"
         />
       )}
 
-      {/* Mobile Menu */}
+      {/* ================= MOBILE MENU ================= */}
       <div
-        className={`fixed top-0 left-0 w-full h-screen bg-white flex flex-col items-center justify-center space-y-8 text-lg transform transition-transform duration-300 z-50
-        ${isOpen ? "translate-x-0" : "-translate-x-full"}`}
+        className={`fixed top-0 left-0 w-full h-screen bg-white flex flex-col items-center justify-center space-y-8 text-lg transition-transform duration-300 z-[50] ${
+          isOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
       >
+
         {navLinks.map((link) => (
           <Link
             key={link.path}
             to={link.path}
             onClick={closeMenu}
-            className={`text-lg font-medium ${
+            className={`text-lg font-medium transition ${
               location.pathname === link.path
                 ? "text-blue-600"
                 : "text-gray-800"
@@ -101,7 +102,9 @@ const Header = () => {
         >
           Submit Paper
         </Link>
+
       </div>
+
     </header>
   );
 };
