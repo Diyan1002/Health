@@ -21,13 +21,16 @@ import Indexing from "./Components/Indexing";
 // import StatsSection from "./Components/StatsSection";
 // import ResearchSection from "./Components/ResearchSection";
 // import AboutJournal from "./Components/AboutJournal";
+import TopBar from "./Components/TopBar";
 // import JournalScope from "./Components/JournalScope";
+import ResearchGallery from "./Components/ResearchGallery";
 import SubmissionFlow from "./Components/SubmissionFlow";
 import WhyPublish from "./Components/WhyPublish";
 import Newsletter from "./Components/Newsletter";
+
 // import CallForPapers from "./Components/CallForPapers";
 // import JournalMetrics from "./Components/JournalMetrics";
-import TopBar from "./Components/TopBar";
+
 
 // ======================
 // 🔷 PAGES
@@ -47,15 +50,17 @@ const Home = () => {
       {/* HERO SECTION */}
       <Hero />
 
+      
+
       {/* TOP ANNOUNCEMENT */}
       <TopBar />
-
+        
       {/* JOURNAL METRICS */}
       {/* <JournalMetrics /> */}
 
       {/* FEATURES */}
       <Features />
-
+       <ResearchGallery />
       {/* AIM CARDS */}
       <Aimcards />
 
