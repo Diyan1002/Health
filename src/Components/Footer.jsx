@@ -1,5 +1,5 @@
 import React from "react";
-import logo from "../assets/logo1.png";
+import logo from "../assets/log.png";
 import { Link } from "react-router-dom";
 import { GraduationCap, Link as LinkIcon, Copyright } from "lucide-react";
 
@@ -15,7 +15,7 @@ const Footer = () => {
           {/* Brand */}
           <div>
             <div className="flex items-center gap-3 mb-5">
-              <img src={logo} alt="Logo" className="h-12 md:h-14" />
+              <img src={logo} alt="Logo" className="h-16 md:h-18" />
               <h1 className="text-lg md:text-xl font-bold text-white leading-tight">
                 J. Comp. <br /> Health Sci.
               </h1>

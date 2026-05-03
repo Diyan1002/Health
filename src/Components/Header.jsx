@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
-import logo from "../assets/logo.png";
+import logo from "../assets/logo.jpeg";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -25,7 +25,7 @@ const Header = () => {
 
         {/* Logo */}
         <div className="flex items-center space-x-3">
-          <img src={logo} alt="Logo" className="h-10 md:h-12" />
+          <img src={logo} alt="Logo" className="h-10 md:h-16" />
           <h1 className="font-semibold text-lg md:text-xl">
             <span className="text-blue-600">J. Comp.</span> Health Sci.
           </h1>
