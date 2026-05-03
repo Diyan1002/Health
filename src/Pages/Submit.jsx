@@ -1,162 +1,223 @@
 import React, { useState } from "react";
-import { motion } from "framer-motion";
 
-const validateForm = (formData) => {
-  const errors = {};
-  if (!formData.authorName) errors.authorName = "Author Name is required";
-  if (!formData.email || !/\S+@\S+\.\S+/.test(formData.email))
-    errors.email = "Valid email is required";
-  if (!formData.manuscriptTitle)
-    errors.manuscriptTitle = "Manuscript Title is required";
-  if (!formData.manuscriptFile)
-    errors.manuscriptFile = "Manuscript file is required";
-  if (!formData.copyrightForm)
-    errors.copyrightForm = "Copyright form is required";
-  return errors;
-};
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
-export default function ManuscriptForm() {
+const Submit = () => {
   const [formData, setFormData] = useState({
     authorName: "",
     email: "",
-    manuscriptTitle: "",
-    manuscriptFile: null,
-    copyrightForm: null,
-    comments: "",
+    phone: "",
+    paperTitle: "",
+    paperCategory: "",
+    abstract: "",
   });
 
-  const [errors, setErrors] = useState({});
+  const [paperFile, setPaperFile] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
 
   const handleChange = (e) => {
-    const { name, value, type, files } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: type === "file" ? files[0] : value,
+      [e.target.name]: e.target.value,
     }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const formErrors = validateForm(formData);
+  const handleFileChange = (e) => {
+    setPaperFile(e.target.files[0]);
+  };
 
-    if (Object.keys(formErrors).length === 0) {
-      alert("Form submitted successfully!");
-    } else {
-      setErrors(formErrors);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    setLoading(true);
+    setMessage("");
+
+    try {
+      const data = new FormData();
+
+      Object.keys(formData).forEach((key) => {
+        data.append(key, formData[key]);
+      });
+
+      if (paperFile) {
+        data.append("paperFile", paperFile);
+      }
+
+      const response = await fetch(`${API_URL}/api/submissions`, {
+        method: "POST",
+        body: data,
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || "Submission failed");
+      }
+
+      setMessage("Paper submitted successfully.");
+
+      setFormData({
+        authorName: "",
+        email: "",
+        phone: "",
+        paperTitle: "",
+        paperCategory: "",
+        abstract: "",
+      });
+
+      setPaperFile(null);
+
+      e.target.reset();
+    } catch (error) {
+      setMessage(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-white to-gray-100 py-16 px-4">
-      <motion.div
-        initial={{ opacity: 0, y: 50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7 }}
-        className="max-w-4xl mx-auto backdrop-blur-xl bg-white/80 border border-gray-200 rounded-3xl shadow-2xl p-10"
-      >
-        {/* Heading */}
-        <div className="text-center mb-10">
-          <h2 className="text-4xl font-bold text-gray-800">
-            Submit Manuscript
-          </h2>
-          <p className="text-gray-500 mt-2 text-sm">
-            Fill the form carefully and upload required documents
+    <section className="min-h-screen bg-gray-50 py-16 px-4">
+      <div className="max-w-3xl mx-auto bg-white shadow-xl rounded-2xl p-6 md:p-10">
+        <div className="text-center mb-8">
+          <p className="text-blue-600 font-semibold uppercase tracking-wide text-sm">
+            Journal Submission
+          </p>
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mt-2">
+            Submit Your Paper
+          </h1>
+          <p className="text-gray-600 mt-3">
+            Fill the form below and upload your manuscript file.
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-7">
-          {/* Inputs */}
-          {[
-            { label: "Corresponding Author Name", name: "authorName", type: "text" },
-            { label: "Email Address", name: "email", type: "email" },
-            { label: "Manuscript Title", name: "manuscriptTitle", type: "text" },
-          ].map((field, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, x: -40 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: i * 0.15 }}
-              className="group"
-            >
-              <label className="text-sm font-semibold text-gray-600 group-focus-within:text-blue-600 transition">
-                {field.label} *
-              </label>
-              <input
-                type={field.type}
-                name={field.name}
-                value={formData[field.name]}
-                onChange={handleChange}
-                className="mt-2 w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition shadow-sm"
-              />
-              {errors[field.name] && (
-                <p className="text-red-500 text-xs mt-1">
-                  {errors[field.name]}
-                </p>
-              )}
-            </motion.div>
-          ))}
+        {message && (
+          <div className="mb-6 rounded-xl bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3">
+            {message}
+          </div>
+        )}
 
-          {/* File Uploads */}
-          {[
-            { name: "manuscriptFile", label: "Upload Manuscript (Word)" },
-            { name: "copyrightForm", label: "Upload Copyright Form" },
-          ].map((field, i) => (
-            <motion.div
-              key={field.name}
-              initial={{ opacity: 0, x: 40 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: i * 0.15 }}
-            >
-              <label className="text-sm font-semibold text-gray-600">
-                {field.label} *
-              </label>
-              <div className="mt-2 border-2 border-dashed border-gray-300 rounded-xl p-4 text-center hover:border-blue-500 transition cursor-pointer">
-                <input
-                  type="file"
-                  name={field.name}
-                  onChange={handleChange}
-                  className="w-full"
-                />
-                <p className="text-xs text-gray-400 mt-1">
-                  Drag & drop or click to upload
-                </p>
-              </div>
-              {errors[field.name] && (
-                <p className="text-red-500 text-xs mt-1">
-                  {errors[field.name]}
-                </p>
-              )}
-            </motion.div>
-          ))}
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Author Name *
+            </label>
+            <input
+              type="text"
+              name="authorName"
+              value={formData.authorName}
+              onChange={handleChange}
+              required
+              className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter author name"
+            />
+          </div>
 
-          {/* Textarea */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            <label className="text-sm font-semibold text-gray-600">
-              Comments for Editor
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Email *
+            </label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+              className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter email address"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Phone Number
+            </label>
+            <input
+              type="text"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter phone number"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Paper Title *
+            </label>
+            <input
+              type="text"
+              name="paperTitle"
+              value={formData.paperTitle}
+              onChange={handleChange}
+              required
+              className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter paper title"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Paper Category
+            </label>
+            <select
+              name="paperCategory"
+              value={formData.paperCategory}
+              onChange={handleChange}
+              className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Select category</option>
+              <option value="Human Medicine">Human Medicine</option>
+              <option value="Veterinary Sciences">Veterinary Sciences</option>
+              <option value="One Health">One Health</option>
+              <option value="Public Health">Public Health</option>
+              <option value="Comparative Health Sciences">
+                Comparative Health Sciences
+              </option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Abstract
             </label>
             <textarea
-              name="comments"
-              value={formData.comments}
+              name="abstract"
+              value={formData.abstract}
               onChange={handleChange}
-              rows="4"
-              className="mt-2 w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition shadow-sm"
-            />
-          </motion.div>
+              rows="5"
+              className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Write short abstract"
+            ></textarea>
+          </div>
 
-          {/* Submit */}
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Upload Manuscript
+            </label>
+            <input
+              type="file"
+              accept=".pdf,.doc,.docx"
+              onChange={handleFileChange}
+              className="w-full border border-gray-300 rounded-xl px-4 py-3 bg-white"
+            />
+            <p className="text-xs text-gray-500 mt-2">
+              Allowed file types: PDF, DOC, DOCX. Max size: 10MB.
+            </p>
+          </div>
+
+          <button
             type="submit"
-            className="w-full py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition"
+            disabled={loading}
+            className="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition disabled:bg-blue-300"
           >
-            Upload Manuscript
-          </motion.button>
+            {loading ? "Submitting..." : "Submit Paper"}
+          </button>
         </form>
-      </motion.div>
-    </div>
+      </div>
+    </section>
   );
-}
+};
+
+export default Submit;

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Download } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import logo from "../assets/logo.jpeg";
 
@@ -16,6 +16,7 @@ const Header = () => {
     { name: "Scope", path: "/scope" },
     { name: "Guidelines", path: "/guidelines" },
     { name: "Editorial Board", path: "/editorial-board" },
+    { name: "Admin Panel", path: "/admin" }
   ];
 
   return (
@@ -48,13 +49,27 @@ const Header = () => {
           ))}
         </nav>
 
-        {/* Submit Button */}
-        <Link
-          to="/submit-paper"
-          className="hidden md:inline-block bg-blue-600 text-white px-5 py-2 rounded-full text-sm hover:bg-blue-700 transition transform hover:scale-105"
-        >
-          Submit Paper
-        </Link>
+        {/* RIGHT SIDE BUTTONS */}
+        <div className="hidden md:flex items-center gap-3">
+
+          {/* Download Template */}
+          <a
+            href="https://www.dropbox.com/scl/fi/zb1kf9ywcrpp455memduy/DOC-20260425-WA0152..docx?rlkey=08fgw8f216zfnq1bh3q6gy01b&st=zczetiga&dl=1"
+            className="flex items-center gap-2 border border-blue-600 text-blue-600 px-4 py-2 rounded-full text-sm hover:bg-blue-50 transition"
+          >
+            <Download size={16} />
+            Template
+          </a>
+
+          {/* Submit Button */}
+          <Link
+            to="/submit-paper"
+            className="bg-blue-600 text-white px-5 py-2 rounded-full text-sm hover:bg-blue-700 transition transform hover:scale-105"
+          >
+            Submit Paper
+          </Link>
+
+        </div>
 
         {/* Mobile Menu Button */}
         <button
@@ -65,7 +80,7 @@ const Header = () => {
         </button>
       </div>
 
-      {/* ================= OVERLAY ================= */}
+      {/* OVERLAY */}
       {isOpen && (
         <div
           onClick={closeMenu}
@@ -73,9 +88,9 @@ const Header = () => {
         />
       )}
 
-      {/* ================= MOBILE MENU ================= */}
+      {/* MOBILE MENU */}
       <div
-        className={`fixed top-0 left-0 w-full h-screen bg-white flex flex-col items-center justify-center space-y-8 text-lg transition-transform duration-300 z-[50] ${
+        className={`fixed top-0 left-0 w-full h-screen bg-white flex flex-col items-center justify-center space-y-6 text-lg transition-transform duration-300 z-[50] ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -85,7 +100,7 @@ const Header = () => {
             key={link.path}
             to={link.path}
             onClick={closeMenu}
-            className={`text-lg font-medium transition ${
+            className={`text-lg font-medium ${
               location.pathname === link.path
                 ? "text-blue-600"
                 : "text-gray-800"
@@ -95,6 +110,17 @@ const Header = () => {
           </Link>
         ))}
 
+        {/* Mobile Download */}
+        <a
+          href="https://www.dropbox.com/scl/fi/zb1kf9ywcrpp455memduy/DOC-20260425-WA0152..docx?rlkey=08fgw8f216zfnq1bh3q6gy01b&st=zczetiga&dl=1"
+          onClick={closeMenu}
+          className="flex items-center gap-2 border border-blue-600 text-blue-600 px-6 py-3 rounded-full hover:bg-blue-50 transition"
+        >
+          <Download size={18} />
+          Download Template
+        </a>
+
+        {/* Mobile Submit */}
         <Link
           to="/submit-paper"
           onClick={closeMenu}

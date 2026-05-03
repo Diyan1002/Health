@@ -41,6 +41,8 @@ import Guidelines from "./Pages/Guidelines";
 import Board from "./Pages/Board";
 import Submit from "./Pages/Submit";
 import ArticleDetail from "./Pages/ArticleDetail";
+
+import AdminPanel from "./Pages/AdminPanel";
 // ======================
 // 🔷 HOME COMPONENT
 // ======================
@@ -121,6 +123,8 @@ const App = () => {
         <Route path="/editorial-board" element={<Board />} />
         <Route path="/submit-paper" element={<Submit />} />
         <Route path="/article/:id" element={<ArticleDetail />} />
+
+        <Route path="/admin" element={<AdminPanel />} />
       </Routes>
 
       {/* FOOTER */}

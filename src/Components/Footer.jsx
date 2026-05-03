@@ -1,7 +1,7 @@
 import React from "react";
 import logo from "../assets/log.png";
 import { Link } from "react-router-dom";
-import { GraduationCap, Link as LinkIcon, Copyright } from "lucide-react";
+import { GraduationCap, Link as LinkIcon, Copyright, Download } from "lucide-react";
 
 const Footer = () => {
   return (
@@ -28,36 +28,16 @@ const Footer = () => {
           </div>
 
           {/* Quick Links */}
-        <div>
-  <h3 className="text-white font-semibold mb-4">Quick Links</h3>
-  <ul className="space-y-2 text-sm">
+          <div>
+            <h3 className="text-white font-semibold mb-4">Quick Links</h3>
+            <ul className="space-y-2 text-sm">
+              <li><Link to="/about" className="hover:text-blue-400">About Us</Link></li>
+              <li><Link to="/scope" className="hover:text-blue-400">Scope</Link></li>
+              <li><Link to="/editorial-board" className="hover:text-blue-400">Editorial Board</Link></li>
+              <li><Link to="/guidelines" className="hover:text-blue-400">Guidelines</Link></li>
+            </ul>
+          </div>
 
-    <li>
-      <Link to="/about" className="hover:text-blue-400 transition">
-        About Us
-      </Link>
-    </li>
-
-    <li>
-      <Link to="/scope" className="hover:text-blue-400 transition">
-        Scope
-      </Link>
-    </li>
-
-    <li>
-      <Link to="/editorial-board" className="hover:text-blue-400 transition">
-        Editorial Board
-      </Link>
-    </li>
-
-    <li>
-      <Link to="/guidelines" className="hover:text-blue-400 transition">
-        Guidelines
-      </Link>
-    </li>
-
-  </ul>
-</div>
           {/* Article Types */}
           <div>
             <h3 className="text-white font-semibold mb-4">Article Types</h3>
@@ -68,37 +48,43 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Contact */}
+          {/* Contact + CTA */}
           <div className="flex flex-col">
-
             <h3 className="text-white font-semibold mb-4">Contact</h3>
 
             <a
               href="mailto:editor@jchealthsci.com"
-              className="text-blue-400 hover:underline break-all text-sm mb-4"
+              className="text-blue-400 hover:underline break-all text-sm mb-6"
             >
               editor@jchealthsci.com
             </a>
 
-            {/* ✅ FIXED POSITION BUTTON */}
-            <div className="mt-auto">
+            {/* CTA Buttons */}
+            <div className="mt-auto flex flex-col gap-3">
+
+              {/* Download Template */}
+              <a
+                href="https://www.dropbox.com/scl/fi/zb1kf9ywcrpp455memduy/DOC-20260425-WA0152..docx?rlkey=08fgw8f216zfnq1bh3q6gy01b&st=zczetiga&dl=1"
+                className="flex items-center justify-center gap-2 border border-white/20 text-white px-5 py-2.5 rounded-full text-sm hover:bg-white/10 transition"
+              >
+                <Download size={16} />
+                Download Template
+              </a>
+
+              {/* Submit Button */}
               <Link
                 to="/submit-paper"
-                className="inline-flex items-center justify-center w-full sm:w-auto
-                bg-blue-600 hover:bg-blue-700 text-white
-                px-6 py-2.5 rounded-full text-sm font-medium
-                transition duration-300 shadow-md hover:shadow-lg
-                transform hover:-translate-y-0.5"
+                className="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-full text-sm font-medium transition shadow-md hover:shadow-lg"
               >
                 Submit Now
               </Link>
-            </div>
 
+            </div>
           </div>
 
         </div>
 
-        {/* INDEXING + LICENSE */}
+        {/* INDEXING */}
         <div className="py-8 border-b border-gray-800">
 
           <h3 className="text-white text-sm font-semibold mb-4 text-center md:text-left">
@@ -123,7 +109,6 @@ const Footer = () => {
             </div>
 
           </div>
-
         </div>
 
         {/* BOTTOM */}
