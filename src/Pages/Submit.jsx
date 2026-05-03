@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+import { supabase } from "../lib/supabaseClient";
 
 const Submit = () => {
   const [formData, setFormData] = useState({
@@ -15,6 +14,13 @@ const Submit = () => {
   const [paperFile, setPaperFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [isError, setIsError] = useState(false);
+
+  const allowedFileTypes = [
+    "application/pdf",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  ];
 
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -24,7 +30,65 @@ const Submit = () => {
   };
 
   const handleFileChange = (e) => {
-    setPaperFile(e.target.files[0]);
+    const file = e.target.files[0];
+
+    if (!file) {
+      setPaperFile(null);
+      return;
+    }
+
+    if (!allowedFileTypes.includes(file.type)) {
+      setIsError(true);
+      setMessage("Only PDF, DOC, and DOCX files are allowed.");
+      e.target.value = "";
+      setPaperFile(null);
+      return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      setIsError(true);
+      setMessage("File size must be less than 10MB.");
+      e.target.value = "";
+      setPaperFile(null);
+      return;
+    }
+
+    setIsError(false);
+    setMessage("");
+    setPaperFile(file);
+  };
+
+  const uploadPaperFile = async () => {
+    if (!paperFile) {
+      return {
+        fileName: "",
+        filePath: "",
+      };
+    }
+
+    const fileExtension = paperFile.name.split(".").pop();
+
+    const cleanFileName = paperFile.name
+      .replace(/\s+/g, "-")
+      .replace(/[^a-zA-Z0-9.-]/g, "");
+
+    const filePath = `${Date.now()}-${crypto.randomUUID()}.${fileExtension}`;
+
+    const { error } = await supabase.storage
+      .from("journal-papers")
+      .upload(filePath, paperFile, {
+        cacheControl: "3600",
+        upsert: false,
+      });
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return {
+      fileName: cleanFileName,
+      filePath,
+    };
   };
 
   const handleSubmit = async (e) => {
@@ -32,30 +96,35 @@ const Submit = () => {
 
     setLoading(true);
     setMessage("");
+    setIsError(false);
 
     try {
-      const data = new FormData();
-
-      Object.keys(formData).forEach((key) => {
-        data.append(key, formData[key]);
-      });
-
-      if (paperFile) {
-        data.append("paperFile", paperFile);
+      if (!formData.authorName || !formData.email || !formData.paperTitle) {
+        throw new Error("Author name, email, and paper title are required.");
       }
 
-      const response = await fetch(`${API_URL}/api/submissions`, {
-        method: "POST",
-        body: data,
-      });
+      const uploadedFile = await uploadPaperFile();
 
-      const result = await response.json();
+      const { error } = await supabase.from("submissions").insert([
+        {
+          author_name: formData.authorName,
+          email: formData.email,
+          phone: formData.phone,
+          paper_title: formData.paperTitle,
+          paper_category: formData.paperCategory,
+          abstract: formData.abstract,
+          file_name: uploadedFile.fileName,
+          file_path: uploadedFile.filePath,
+          status: "Pending",
+        },
+      ]);
 
-      if (!response.ok) {
-        throw new Error(result.message || "Submission failed");
+      if (error) {
+        throw new Error(error.message);
       }
 
       setMessage("Paper submitted successfully.");
+      setIsError(false);
 
       setFormData({
         authorName: "",
@@ -67,10 +136,10 @@ const Submit = () => {
       });
 
       setPaperFile(null);
-
       e.target.reset();
     } catch (error) {
-      setMessage(error.message);
+      setIsError(true);
+      setMessage(error.message || "Submission failed.");
     } finally {
       setLoading(false);
     }
@@ -78,134 +147,91 @@ const Submit = () => {
 
   return (
     <section className="min-h-screen bg-gray-50 py-16 px-4">
-      <div className="max-w-3xl mx-auto bg-white shadow-xl rounded-2xl p-6 md:p-10">
-        <div className="text-center mb-8">
-          <p className="text-blue-600 font-semibold uppercase tracking-wide text-sm">
-            Journal Submission
-          </p>
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mt-2">
-            Submit Your Paper
-          </h1>
-          <p className="text-gray-600 mt-3">
-            Fill the form below and upload your manuscript file.
-          </p>
-        </div>
+      <div className="max-w-3xl mx-auto bg-white shadow-xl rounded-2xl p-8">
+        <h1 className="text-3xl font-bold text-gray-900">
+          Submit Your Paper
+        </h1>
+
+        <p className="text-gray-600 mt-2">
+          Fill the form below to submit your research paper.
+        </p>
 
         {message && (
-          <div className="mb-6 rounded-xl bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3">
+          <div
+            className={`mt-6 border px-4 py-3 rounded-xl ${
+              isError
+                ? "bg-red-50 border-red-200 text-red-700"
+                : "bg-green-50 border-green-200 text-green-700"
+            }`}
+          >
             {message}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Author Name *
-            </label>
-            <input
-              type="text"
-              name="authorName"
-              value={formData.authorName}
-              onChange={handleChange}
-              required
-              className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter author name"
-            />
-          </div>
+        <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+          <input
+            type="text"
+            name="authorName"
+            placeholder="Author Name"
+            value={formData.authorName}
+            onChange={handleChange}
+            className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
 
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Email *
-            </label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-              className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter email address"
-            />
-          </div>
+          <input
+            type="email"
+            name="email"
+            placeholder="Email Address"
+            value={formData.email}
+            onChange={handleChange}
+            className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
 
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Phone Number
-            </label>
-            <input
-              type="text"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter phone number"
-            />
-          </div>
+          <input
+            type="text"
+            name="phone"
+            placeholder="Phone Number"
+            value={formData.phone}
+            onChange={handleChange}
+            className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
 
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Paper Title *
-            </label>
-            <input
-              type="text"
-              name="paperTitle"
-              value={formData.paperTitle}
-              onChange={handleChange}
-              required
-              className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter paper title"
-            />
-          </div>
+          <input
+            type="text"
+            name="paperTitle"
+            placeholder="Paper Title"
+            value={formData.paperTitle}
+            onChange={handleChange}
+            className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
 
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Paper Category
-            </label>
-            <select
-              name="paperCategory"
-              value={formData.paperCategory}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">Select category</option>
-              <option value="Human Medicine">Human Medicine</option>
-              <option value="Veterinary Sciences">Veterinary Sciences</option>
-              <option value="One Health">One Health</option>
-              <option value="Public Health">Public Health</option>
-              <option value="Comparative Health Sciences">
-                Comparative Health Sciences
-              </option>
-            </select>
-          </div>
+          <input
+            type="text"
+            name="paperCategory"
+            placeholder="Paper Category"
+            value={formData.paperCategory}
+            onChange={handleChange}
+            className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
 
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Abstract
-            </label>
-            <textarea
-              name="abstract"
-              value={formData.abstract}
-              onChange={handleChange}
-              rows="5"
-              className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Write short abstract"
-            ></textarea>
-          </div>
+          <textarea
+            name="abstract"
+            placeholder="Abstract"
+            value={formData.abstract}
+            onChange={handleChange}
+            rows="5"
+            className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          ></textarea>
 
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Upload Manuscript
-            </label>
-            <input
-              type="file"
-              accept=".pdf,.doc,.docx"
-              onChange={handleFileChange}
-              className="w-full border border-gray-300 rounded-xl px-4 py-3 bg-white"
-            />
-            <p className="text-xs text-gray-500 mt-2">
-              Allowed file types: PDF, DOC, DOCX. Max size: 10MB.
-            </p>
-          </div>
+          <input
+            type="file"
+            accept=".pdf,.doc,.docx"
+            onChange={handleFileChange}
+            className="w-full border border-gray-300 rounded-xl px-4 py-3 bg-white"
+          />
 
           <button
             type="submit"
